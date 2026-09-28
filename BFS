@@ -1,0 +1,80 @@
+from collections import deque
+import time
+
+# --------------------------------------------------
+# Graph
+# --------------------------------------------------
+
+graph = {
+    'S': ['A', 'B'],
+    'A': ['C', 'D'],
+    'B': ['D', 'E'],
+    'C': ['F'],
+    'D': ['F', 'G'],
+    'E': ['G'],
+    'F': ['G'],
+    'G': []
+}
+
+
+# --------------------------------------------------
+# BFS Algorithm
+# --------------------------------------------------
+
+def bfs(graph, start, goal):
+
+    queue = deque([[start]])
+    visited = set()
+
+    nodes_explored = 0
+
+    while queue:
+
+        path = queue.popleft()
+        node = path[-1]
+
+        nodes_explored += 1
+
+        # Goal test
+        if node == goal:
+            return path, nodes_explored
+
+        if node not in visited:
+
+            visited.add(node)
+
+            for neighbour in graph[node]:
+
+                if neighbour not in visited:
+                    new_path = path + [neighbour]
+                    queue.append(new_path)
+
+    return None, nodes_explored
+
+
+# --------------------------------------------------
+# Execute BFS
+# --------------------------------------------------
+
+start_time = time.perf_counter()
+
+path, nodes = bfs(graph, 'S', 'G')
+
+end_time = time.perf_counter()
+
+execution_time = end_time - start_time
+
+
+# --------------------------------------------------
+# Display Result
+# --------------------------------------------------
+
+print("========== BFS SEARCH ==========")
+
+if path:
+    print("Path Found :", " -> ".join(path))
+else:
+    print("No path found")
+
+print("Nodes Explored :", nodes)
+print("Execution Time :", execution_time, "seconds")
