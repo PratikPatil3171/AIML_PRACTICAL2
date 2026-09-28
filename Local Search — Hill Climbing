@@ -1,0 +1,76 @@
+import random
+import time
+
+# --------------------------------------------------
+# Objective / Fitness Function
+# --------------------------------------------------
+
+def fitness(x):
+
+    # Maximum value occurs at x = 10
+
+    return -(x - 10) ** 2 + 100
+
+
+# --------------------------------------------------
+# Hill Climbing Algorithm
+# --------------------------------------------------
+
+def hill_climbing():
+
+    # Random initial solution
+    current = random.randint(0, 20)
+
+    steps = 0
+
+    while True:
+
+        steps += 1
+
+        # Generate neighbours
+        neighbours = []
+
+        if current > 0:
+            neighbours.append(current - 1)
+
+        if current < 20:
+            neighbours.append(current + 1)
+
+        # Select the best neighbour
+        best_neighbour = max(
+            neighbours,
+            key=fitness
+        )
+
+        # Stop if no improvement is possible
+        if fitness(best_neighbour) <= fitness(current):
+
+            return current, fitness(current), steps
+
+        # Move to better state
+        current = best_neighbour
+
+
+# --------------------------------------------------
+# Execute Hill Climbing
+# --------------------------------------------------
+
+start_time = time.perf_counter()
+
+solution, value, steps = hill_climbing()
+
+end_time = time.perf_counter()
+
+execution_time = end_time - start_time
+
+
+# --------------------------------------------------
+# Display Result
+# --------------------------------------------------
+
+print("========== HILL CLIMBING ==========")
+
+print("Final Solution :", solution)
+print("Fitness Value  :", value)
+print("Steps Taken    :", steps)
+print("Execution Time :", execution_time, "seconds")
