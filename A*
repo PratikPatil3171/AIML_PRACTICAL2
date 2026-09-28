@@ -1,0 +1,147 @@
+import heapq
+import time
+
+# --------------------------------------------------
+# Weighted Graph
+# --------------------------------------------------
+
+graph = {
+    'S': {
+        'A': 2,
+        'B': 5
+    },
+
+    'A': {
+        'C': 2,
+        'D': 4
+    },
+
+    'B': {
+        'D': 1,
+        'E': 3
+    },
+
+    'C': {
+        'F': 5
+    },
+
+    'D': {
+        'F': 2,
+        'G': 6
+    },
+
+    'E': {
+        'G': 2
+    },
+
+    'F': {
+        'G': 1
+    },
+
+    'G': {}
+}
+
+
+# --------------------------------------------------
+# Heuristic Values
+# --------------------------------------------------
+
+heuristic = {
+    'S': 8,
+    'A': 6,
+    'B': 5,
+    'C': 5,
+    'D': 3,
+    'E': 2,
+    'F': 1,
+    'G': 0
+}
+
+
+# --------------------------------------------------
+# A* Algorithm
+# --------------------------------------------------
+
+def a_star(graph, start, goal, heuristic):
+
+    # (f_cost, g_cost, node, path)
+    priority_queue = [
+        (heuristic[start], 0, start, [start])
+    ]
+
+    visited = set()
+
+    nodes_explored = 0
+
+    while priority_queue:
+
+        f_cost, g_cost, node, path = heapq.heappop(
+            priority_queue
+        )
+
+        nodes_explored += 1
+
+        # Goal test
+        if node == goal:
+            return path, g_cost, nodes_explored
+
+        if node in visited:
+            continue
+
+        visited.add(node)
+
+        # Explore neighbours
+        for neighbour, edge_cost in graph[node].items():
+
+            new_g_cost = g_cost + edge_cost
+
+            new_f_cost = (
+                new_g_cost +
+                heuristic[neighbour]
+            )
+
+            heapq.heappush(
+                priority_queue,
+                (
+                    new_f_cost,
+                    new_g_cost,
+                    neighbour,
+                    path + [neighbour]
+                )
+            )
+
+    return None, None, nodes_explored
+
+
+# --------------------------------------------------
+# Execute A*
+# --------------------------------------------------
+
+start_time = time.perf_counter()
+
+path, cost, nodes = a_star(
+    graph,
+    'S',
+    'G',
+    heuristic
+)
+
+end_time = time.perf_counter()
+
+execution_time = end_time - start_time
+
+
+# --------------------------------------------------
+# Display Result
+# --------------------------------------------------
+
+print("========== A* SEARCH ==========")
+
+if path:
+    print("Path Found :", " -> ".join(path))
+    print("Path Cost  :", cost)
+else:
+    print("No path found")
+
+print("Nodes Explored :", nodes)
+print("Execution Time :", execution_time, "seconds")
