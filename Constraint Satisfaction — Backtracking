@@ -1,0 +1,138 @@
+import time
+
+# --------------------------------------------------
+# Locations
+# --------------------------------------------------
+
+locations = [
+    'P',
+    'Q',
+    'R',
+    'S'
+]
+
+
+# --------------------------------------------------
+# Neighbour Relationships
+# --------------------------------------------------
+
+neighbours = {
+
+    'P': ['Q', 'R'],
+
+    'Q': ['P', 'R', 'S'],
+
+    'R': ['P', 'Q', 'S'],
+
+    'S': ['Q', 'R']
+}
+
+
+# --------------------------------------------------
+# Available Colours
+# --------------------------------------------------
+
+colours = [
+    'Yellow',
+    'Green',
+    'Blue'
+]
+
+
+# --------------------------------------------------
+# Check Constraint
+# --------------------------------------------------
+
+def is_valid(location, colour, assignment):
+
+    for neighbour in neighbours[location]:
+
+        if assignment.get(neighbour) == colour:
+            return False
+
+    return True
+
+
+# --------------------------------------------------
+# Backtracking CSP Algorithm
+# --------------------------------------------------
+
+def solve_csp(assignment=None):
+
+    if assignment is None:
+        assignment = {}
+
+    # All locations assigned
+    if len(assignment) == len(locations):
+        return assignment.copy()
+
+    # Select an unassigned location
+    location = next(
+        location
+        for location in locations
+        if location not in assignment
+    )
+
+    # Try each colour
+    for colour in colours:
+
+        if is_valid(
+            location,
+            colour,
+            assignment
+        ):
+
+            # Assign colour
+            assignment[location] = colour
+
+            # Recursively solve
+            solution = solve_csp(assignment)
+
+            if solution is not None:
+                return solution
+
+            # Backtrack
+            del assignment[location]
+
+    return None
+
+
+# --------------------------------------------------
+# Execute CSP
+# --------------------------------------------------
+
+start_time = time.perf_counter()
+
+solution = solve_csp()
+
+end_time = time.perf_counter()
+
+execution_time = end_time - start_time
+
+
+# --------------------------------------------------
+# Display Result
+# --------------------------------------------------
+
+print("========== CSP BACKTRACKING ==========")
+
+if solution:
+
+    for location, colour in solution.items():
+
+        print(
+            location,
+            " = ",
+            colour
+        )
+
+else:
+
+    print("No valid solution found")
+
+
+print(
+    "Execution Time :",
+    execution_time,
+    "seconds"
+)
